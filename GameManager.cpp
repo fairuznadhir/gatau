@@ -1,11 +1,28 @@
 #include "GameManager.h"
 #include <iostream>
 
-GameManager::GameManager(int boardSize) : board(boardSize) {}
+GameManager::GameManager(int boardSize) : board(boardSize), currentPlayerIndex(0) {}
 
 void GameManager::startGame() {
     std::cout << "Welcome to Sudoku!" << std::endl;
-    // Implementasi logika permainan
+    Player player1("Player 1");
+    Player player2("Player 2");
+    players.push_back(player1);
+    players.push_back(player2);
+
+    while (!checkWin() && !board.isFull()) {
+        Player& currentPlayer = players[currentPlayerIndex];
+        board.printBoard();
+        std::cout << currentPlayer.getName() << "'s turn:" << std::endl;
+        getPlayerInput(currentPlayer);
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+    }
+
+    if (checkWin()) {
+        std::cout << "Congratulations! " << players[currentPlayerIndex].getName() << " wins!" << std::endl;
+    } else {
+        std::cout << "It's a draw!" << std::endl;
+    }
 }
 
 bool GameManager::checkWin() {
@@ -13,14 +30,11 @@ bool GameManager::checkWin() {
 }
 
 void GameManager::getPlayerInput(Player& player) {
-    std::cout << "Player " << player.getName() << ", enter row, column, and value (separated by space): ";
     int row, col, value;
-    std::cin >> row >> col >> value;
+    do {
+        std::cout << "Enter row, column, and value (1-" << board.getSize() << ") separated by space: ";
+        std::cin >> row >> col >> value;
+    } while (!board.isValidMove(row - 1, col - 1, value));
 
-    if (board.isValidMove(row, col, value)) {
-        board.setValue(row, col, value);
-        player.increaseScore(10); // Skor pemain naik 10 setiap langkah yang valid
-    } else {
-        std::cout << "Invalid move. Try again." << std::endl;
-    }
+    board.setValue(row - 1, col - 1, value);
 }
