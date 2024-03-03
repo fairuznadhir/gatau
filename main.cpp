@@ -1,7 +1,7 @@
 include <iostream>
 include <vector>
-include <>
-include <>
+include <conio.h>
+include <time.h>
 
 using namespace std;
 
