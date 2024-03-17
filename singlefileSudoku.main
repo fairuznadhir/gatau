@@ -4,6 +4,18 @@
 #include <cstdlib>
 #include <ctime>
 
+class Player {
+private:
+    std::string name;
+
+public:
+    Player(const std::string& playerName) : name(playerName) {}
+
+    std::string getName() const {
+        return name;
+    }
+};
+
 class Board {
 private:
     int size;
@@ -118,12 +130,13 @@ public:
 class GameManager {
 private:
     Board board;
+    Player player;
 
 public:
-    GameManager(int boardSize) : board(boardSize) {}
+    GameManager(int boardSize, const std::string& playerName) : board(boardSize), player(playerName) {}
 
     void startGame() {
-        std::cout << "Welcome to Sudoku!" << std::endl;
+        std::cout << "Welcome to Sudoku, " << player.getName() << "!" << std::endl;
 
         while (!board.isFull() && !board.isWin()) {
             board.printBoard();
@@ -149,7 +162,11 @@ public:
 };
 
 int main() {
-    GameManager gameManager(9);
+    std::string playerName;
+    std::cout << "Enter your name: ";
+    std::cin >> playerName;
+
+    GameManager gameManager(9, playerName);
     gameManager.startGame();
     return 0;
 }
