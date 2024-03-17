@@ -1,7 +1,25 @@
 #include "Board.h"
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 
-Board::Board(int boardSize) : size(boardSize), grid(boardSize, std::vector<int>(boardSize, 0)) {}
+Board::Board(int boardSize) : size(boardSize), grid(boardSize, std::vector<int>(boardSize, 0)) {
+    // Generate a random initial board state for single player
+    srand(time(0));
+    // Generate random positions to be filled initially (30% of the board)
+    int filledCells = boardSize * boardSize * 0.3;
+    for (int i = 0; i < filledCells; ++i) {
+        int row = rand() % boardSize;
+        int col = rand() % boardSize;
+        int value = rand() % boardSize + 1;
+        while (!isValidMove(row, col, value)) {
+            row = rand() % boardSize;
+            col = rand() % boardSize;
+            value = rand() % boardSize + 1;
+        }
+        grid[row][col] = value;
+    }
+}
 
 int Board::getSize() const {
     return size;
@@ -35,13 +53,14 @@ bool Board::isValidMove(int row, int col, int value) const {
         return false;
     }
 
-    // Cek apakah nilai sudah ada di baris, kolom, atau kotak 3x3 yang sama
+    // Check if value already exists in row or column
     for (int i = 0; i < size; ++i) {
         if (grid[row][i] == value || grid[i][col] == value) {
             return false;
         }
     }
 
+    // Check if value already exists in the same 3x3 box
     int boxRow = row / 3 * 3;
     int boxCol = col / 3 * 3;
     for (int i = boxRow; i < boxRow + 3; ++i) {
@@ -56,12 +75,19 @@ bool Board::isValidMove(int row, int col, int value) const {
 }
 
 bool Board::isWin() const {
-    // Implementasi logika untuk memeriksa apakah permainan sudah dimenangkan
-    return false;
+    // Check if the player has successfully completed the Sudoku puzzle
+    for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; ++j) {
+            if (grid[i][j] == 0) {
+                return false; // If there's still an empty cell, the game is not won yet
+            }
+        }
+    }
+    return true; // If no empty cell is found, the game is won
 }
 
 void Board::printBoard() const {
-    // Implementasi untuk mencetak papan permainan
+    // Implementation for printing the game board
     std::cout << "  ";
     for (int i = 0; i < size; ++i) {
         std::cout << i + 1 << " ";
