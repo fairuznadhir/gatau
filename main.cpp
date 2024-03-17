@@ -1,7 +1,12 @@
 #include "GameManager.h"
+#include <iostream>
 
 int main() {
-    GameManager gameManager(9);
+    std::string playerName;
+    std::cout << "Enter your name: ";
+    std::cin >> playerName;
+
+    GameManager gameManager(9, playerName);
     gameManager.startGame();
     return 0;
 }
